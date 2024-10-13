@@ -27,4 +27,3 @@ pipeline {
                 engagementName: 'adaml.kazmierczak@gmail.com')
         }
     }
-}
