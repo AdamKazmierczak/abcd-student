@@ -56,14 +56,14 @@ pipeline {
       // )
 
 // artifact: '/tmp/zap_xml_report.xml',
-        // post {
-        //     always {
-        //         defectDojoPublisher(artifact: 'results/sca-osv-scanner.json', 
-        //             productName: 'Juice Shop', 
-        //             scanType: 'OSV Scan', 
-        //             engagementName: 'adaml.kazmierczak@gmail.com')
-        //     }
-        // }
+        post {
+            always {
+                defectDojoPublisher(artifact: 'results/sca-osv-scanner.json', 
+                    productName: 'Juice Shop', 
+                    scanType: 'OSV Scan', 
+                    engagementName: 'adaml.kazmierczak@gmail.com')
+            }
+        }
     }
   }
 }
