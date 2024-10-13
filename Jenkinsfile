@@ -49,6 +49,7 @@ pipeline {
 
       defectDojoPublisher(
         artifact: '/tmp/zap_xml_report.xml',
+        abcd-student/.zap:/zap/wrk:rw
         productName: 'Juice Shop',
         scanType: 'ZAP Scan',
         engagementName: 'adam'
