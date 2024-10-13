@@ -12,10 +12,13 @@ pipeline {
                 }
             }
         }
-        }
         stage('SCA scan') {
             steps {
-                sh 'osv-scanner scan --lockfile package-lock.json --format json --output results/sca-osv-scanner.json'
+                script {
+                    // Ensure results directory exists
+                    sh 'mkdir -p results'
+                    sh 'osv-scanner scan --lockfile package-lock.json --format json --output results/sca-osv-scanner.json'
+                }
             }
         }
     }
@@ -27,3 +30,4 @@ pipeline {
                 engagementName: 'adaml.kazmierczak@gmail.com')
         }
     }
+}
