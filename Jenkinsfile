@@ -47,12 +47,12 @@ pipeline {
         '''
       }
 
-      defectDojoPublisher(
-        artifact: '/tmp/',
-        productName: 'Juice Shop',
-        scanType: 'ZAP Scan',
-        engagementName: 'adam'
-      )
+      // defectDojoPublisher(
+      //   artifact: '/tmp/',
+      //   productName: 'Juice Shop',
+      //   scanType: 'ZAP Scan',
+      //   engagementName: 'adam'
+      // )
 
 // artifact: '/tmp/zap_xml_report.xml',
         // post {
