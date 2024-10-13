@@ -29,7 +29,7 @@ pipeline {
             defectDojoPublisher(artifact: 'results/sca-osv-scanner.json', 
                 productName: 'Juice Shop', 
                 scanType: 'OSV Scan', 
-                engagementName: 'krzysztof@bezpiecznykod.pl')
+                engagementName: 'adaml.kazmierczak@gmail.com')
         }
     }
 }
