@@ -30,10 +30,10 @@ pipeline {
             -v '/mnt/c/git/abc/abcd-student-Reports/:/zap/wrk/reports' \\
             zaproxy/zap-stable bash -c \\      
             'zap.sh -cmd -addonupdate && \\
-            zap.sh -cmd -addoninstall communityScripts && \\
-            zap.sh -cmd -addoninstall pscanrulesAlpha && \\
-            zap.sh -cmd -addoninstall pscanrulesBeta && \\
-            zap.sh -cmd -autorun wrk/passive.yaml'
+             zap.sh -cmd -addoninstall communityScripts && \\
+             zap.sh -cmd -addoninstall pscanrulesAlpha && \\
+             zap.sh -cmd -addoninstall pscanrulesBeta && \\
+             zap.sh -cmd -autorun wrk/passive.yaml'
         '''
       }
     }
