@@ -15,6 +15,7 @@ pipeline {
         stage('Example') {
             steps {
                 // Add your actual steps here
+                sh 'mkdir -p results'
                 echo 'Running example stage'
             }
         }
