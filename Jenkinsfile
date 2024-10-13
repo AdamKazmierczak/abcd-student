@@ -33,7 +33,7 @@ pipeline {
             zap.sh -cmd -addoninstall communityScripts && \\
             zap.sh -cmd -addoninstall pscanrulesAlpha && \\
             zap.sh -cmd -addoninstall pscanrulesBeta && \\
-            'zap.sh -cmd -autorun wrk/passive.yaml'
+            zap.sh -cmd -autorun wrk/passive.yaml'
         '''
       }
     }
