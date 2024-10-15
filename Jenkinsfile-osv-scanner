@@ -22,8 +22,8 @@ pipeline {
                     // Ensure the results directory exists
                     sh 'mkdir -p results'
                     
-                    // Run the OSV scanner and capture its output
-                    def scanOutput = sh(script: 'osv-scanner scan --lockfile package-lock.json --format json --output results/sca-osv-scanner.json', returnStdout: true).trim()
+                    // Run the OSV scanner and capture its output in HTML format
+                    def scanOutput = sh(script: 'osv-scanner scan --lockfile package-lock.json --format html --output results/sca-osv-scanner.html', returnStdout: true).trim()
                     
                     // Log the scan output
                     echo "OSV Scanner Output: ${scanOutput}"
@@ -45,41 +45,17 @@ pipeline {
         stage('Generate Report') {
             steps {
                 script {
-                    // Read the results from the OSV scanner JSON output
-                    def jsonContent = [:] // Initialize an empty map to handle the case where the file might not exist
-                    try {
-                        jsonContent = readJSON file: 'results/sca-osv-scanner.json'
-                    } catch (Exception e) {
-                        echo "Warning: Failed to read OSV scanner results. ${e.getMessage()}"
-                    }
-                    
-                    // Prepare the Markdown report
+                    // Prepare the Markdown report (optional)
                     def reportContent = new StringBuilder()
                     reportContent.append("# SCA Report\n\n")
-                    reportContent.append("## Summary\n\n")
                     reportContent.append("This report summarizes the results from the OSV scanner.\n\n")
+                    reportContent.append("## Summary\n\n")
                     
-                    // Add vulnerability details to the report
-                    if (jsonContent.results) {
-                        jsonContent.results.each { result ->
-                            result.packages.each { pkg ->
-                                reportContent.append("### Package: ${pkg.package.name} (Version: ${pkg.package.version})\n")
-                                pkg.vulnerabilities.each { vuln ->
-                                    reportContent.append("- **ID**: ${vuln.id}\n")
-                                    reportContent.append("- **Summary**: ${vuln.summary}\n")
-                                    reportContent.append("- **Published**: ${vuln.published}\n")
-                                    reportContent.append("- **Modified**: ${vuln.modified}\n")
-                                    reportContent.append("- **Severity**: ${vuln.database_specific.severity}\n")
-                                    reportContent.append("- **Details**: ${vuln.details}\n")
-                                    reportContent.append("- **Recommendation**: ${vuln.details}\n\n")
-                                }
-                            }
-                        }
-                    } else {
-                        reportContent.append("No vulnerabilities found.\n")
-                    }
-                    
-                    // Write the report to a Markdown file
+                    // You can include details about the vulnerabilities in Markdown format here if needed
+                    // For now, we will just refer to the HTML report that was generated
+                    reportContent.append("The detailed SCA report can be found in the HTML format in the results directory: [sca-osv-scanner.html](results/sca-osv-scanner.html)\n\n")
+
+                    // Write the optional Markdown report to a file
                     writeFile file: 'results/sca-report.md', text: reportContent.toString()
                 }
             }
@@ -88,8 +64,10 @@ pipeline {
     
     post {
         always {
-            // Archive the OSV scan report and the generated report for later review
-            archiveArtifacts artifacts: 'results/sca-osv-scanner.json', allowEmptyArchive: true
+            // Archive the HTML report for later review
+            archiveArtifacts artifacts: 'results/sca-osv-scanner.html', allowEmptyArchive: true
+            
+            // Archive the Markdown report (optional)
             archiveArtifacts artifacts: 'results/sca-report.md', allowEmptyArchive: true
             
             // Clean up workspace after the job
