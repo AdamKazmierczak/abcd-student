@@ -49,7 +49,7 @@ post {
         }
 
         // Archive the report from the specified directory
-        archiveArtifacts artifacts: '/mnt/c/git/abc/abcd-student-Reports/zap_xml_report2.xml', 
+        archiveArtifacts artifacts: '/mnt/c/git/abc/abcd-student-Reports/zap_xml_report.xml', 
                          allowEmptyArchive: true
 
         // Publish to DefectDojo
