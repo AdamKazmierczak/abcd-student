@@ -31,15 +31,35 @@ pipeline {
                 }
             }
         }
-        stage('Read and Print Full SCA Report') {
+        stage('Read and Print SCA Report') {
             steps {
                 script {
-                    // Read the entire JSON output from the scan
+                    // Read the JSON output from the scan
                     def scaReport = readJSON file: 'results/sca-osv-scanner.json'
                     
-                    // Print the full JSON content
-                    echo "Full OSV scanner JSON report:"
-                    echo scaReport.toString()
+                    // Check if there are any vulnerabilities
+                    if (scaReport.vulnerabilities && scaReport.vulnerabilities.size() > 0) {
+                        echo "Vulnerabilities found:"
+                        for (vuln in scaReport.vulnerabilities) {
+                            // Extract vulnerability details
+                            def vulnId = vuln.id ?: 'N/A'
+                            def packageName = vuln.package?.name ?: 'N/A'
+                            def affectedVersions = vuln.affected?.size() > 0 ? vuln.affected[0].ranges[0].events[0].introduced : 'N/A'
+                            def severity = vuln.database_specific?.severity ?: 'N/A'
+                            def referenceUrl = vuln.references?.size() > 0 ? vuln.references[0].url : 'N/A'
+
+                            // Print vulnerability details
+                            echo """
+                            Vulnerability: ${vulnId}
+                            Package: ${packageName}
+                            Affected Versions: ${affectedVersions}
+                            Severity: ${severity}
+                            URL: ${referenceUrl}
+                            """
+                        }
+                    } else {
+                        echo "No vulnerabilities found in the report."
+                    }
                 }
             }
         }
