@@ -18,7 +18,7 @@ pipeline {
                     // Ensure results directory exists
                     sh 'mkdir -p results'
                     
-                    // Run osv-scanner and capture exit status
+                    // Run osv-scanner and capture both output and exit code
                     def exitCode = sh(returnStatus: true, script: 'osv-scanner scan --lockfile package-lock.json --format json --output results/sca-osv-scanner.json')
                     
                     // Log the exit code
@@ -34,20 +34,20 @@ pipeline {
         stage('Read and Print SCA Report') {
             steps {
                 script {
-                    // Read the JSON report file
-                    def report = readJSON file: 'results/sca-osv-scanner.json'
+                    // Read the JSON output from the scan
+                    def scaReport = readJSON file: 'results/sca-osv-scanner.json'
                     
-                    // Check if 'vulns' key exists and process vulnerabilities
-                    if (report.containsKey('vulns')) {
+                    // Check if there are any vulnerabilities
+                    if (scaReport.vulnerabilities && scaReport.vulnerabilities.size() > 0) {
                         echo "Vulnerabilities found:"
-                        report.vulns.each { vuln ->
-                            echo "Package: ${vuln.package.name ?: 'N/A'}"
-                            echo "Version: ${vuln.package.version ?: 'N/A'}"
-                            echo "Vulnerability ID: ${vuln.vulnerability_id ?: 'N/A'}"
-                            echo "Summary: ${vuln.summary ?: 'N/A'}"
-                            echo "Severity: ${vuln.severity ?: 'N/A'}"
-                            echo "Fixed Version: ${vuln.fix_version ?: 'N/A'}"
-                            echo "-" * 40
+                        for (vuln in scaReport.vulnerabilities) {
+                            echo """
+                            Vulnerability: ${vuln.id}
+                            Package: ${vuln.package.name}
+                            Affected Versions: ${vuln.affected[0].ranges[0].events[0].introduced}
+                            Severity: ${vuln.database_specific.severity}
+                            URL: ${vuln.references[0].url}
+                            """
                         }
                     } else {
                         echo "No vulnerabilities found in the report."
@@ -58,15 +58,8 @@ pipeline {
     }
     post {
         always {
-            // Archive the report from the specified directory
-            archiveArtifacts artifacts: 'results/zap_xml_report.xml', 
-                             allowEmptyArchive: true
-
-            // // Publish the report to DefectDojo
-            // defectDojoPublisher(artifact: 'results/sca-osv-scanner.json', 
-            //     productName: 'Juice Shop', 
-            //     scanType: 'OSV Scan', 
-            //     engagementName: 'adaml.kazmierczak@gmail.com')
+            // Archive the OSV scan report for later review
+            archiveArtifacts artifacts: 'results/sca-osv-scanner.json', allowEmptyArchive: true
         }
     }
 }
