@@ -40,22 +40,26 @@ pipeline {
     }
   }
 
-  post {
+post {
     always {
-      script {
-        sh '''
-          docker stop juice-shop || true
-        '''
-      }
+        script {
+            sh '''
+              docker stop juice-shop || true
+            '''
+        }
 
-            always {
-                defectDojoPublisher(artifact: 'results/zap_xml_report.xml', 
-                    productName: 'Juice Shop', 
-                    scanType: 'OSV Scan', 
-                    engagementName: 'adaml.kazmierczak@gmail.com')
-            }
+        // Archive the report from the specified directory
+        archiveArtifacts artifacts: '/mnt/c/git/abc/abcd-student-Reports/zap_xml_report2.xml', 
+                         allowEmptyArchive: true
 
+        // Publish to DefectDojo
+        defectDojoPublisher(artifact: 'results/zap_xml_report.xml', 
+                            productName: 'Juice Shop', 
+                            scanType: 'OSV Scan', 
+                            engagementName: 'adaml.kazmierczak@gmail.com')
     }
-  }
+}
+
+    
 }
 
