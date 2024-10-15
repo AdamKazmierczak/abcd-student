@@ -48,16 +48,8 @@ pipeline {
         '''
       }
 
-      // defectDojoPublisher(
-      //   artifact: '/tmp/',
-      //   productName: 'Juice Shop',
-      //   scanType: 'ZAP Scan',
-      //   engagementName: 'adam'
-      // )
-
-// artifact: '/tmp/zap_xml_report.xml',
             always {
-                defectDojoPublisher(artifact: 'results/sca-osv-scanner.json', 
+                defectDojoPublisher(artifact: 'results/zap_xml_report.xml', 
                     productName: 'Juice Shop', 
                     scanType: 'OSV Scan', 
                     engagementName: 'adaml.kazmierczak@gmail.com')
@@ -67,15 +59,3 @@ pipeline {
   }
 }
 
-
-          // docker run --name zap --rm \\
-          //   --add-host host.docker.internal:host-gateway \\
-          //   -v '/mnt/c/git/abc/abcd-student/.zap:/zap/wrk/passive_scan.yaml:rw' \\
-          //   -v '/mnt/c/git/abc/abcd-student-Reports/:/zap/wrk/reports' \\
-          //   tghcr.io/zaproxy/zaproxy:stable bash -c \\
-          //   owasp/zap2docker-stable
-          //   'zap.sh -cmd -addonupdate && \\
-          //   zap.sh -cmd -addoninstall communityScripts && \\
-          //   zap.sh -cmd -addoninstall pscanrulesAlpha && \\
-          //   zap.sh -cmd -addoninstall pscanrulesBeta && \\
-          //   zap.sh -cmd -autorun /zap/wrk/passive_scan.yaml'
