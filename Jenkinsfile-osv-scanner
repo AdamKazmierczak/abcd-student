@@ -69,7 +69,12 @@ pipeline {
             
             // Archive the optional report (if generated)
             archiveArtifacts artifacts: 'results/sca-report.md', allowEmptyArchive: true
-            
+
+            defectDojoPublisher(artifact: 'results/sca-osv-scanner.json', 
+                productName: 'Juice Shop', 
+                scanType: 'OSV Scan', 
+                engagementName: 'adaml.kazmierczak@gmail.com')
+
             // Clean up workspace after the job
             cleanWs()
         }
