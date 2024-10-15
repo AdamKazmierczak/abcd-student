@@ -43,31 +43,40 @@ pipeline {
                     
                     // Print the entire report for debugging purposes
                     echo "SCA Report: ${scaReport}"
+
+                    // Iterate over the packages to check for vulnerabilities
+                    def packages = scaReport.collect { it.packages }.flatten() // Flatten the list of packages
+                    def vulnerabilitiesFound = false
                     
-                    // Check if there are any vulnerabilities
-                    if (scaReport.vulnerabilities && scaReport.vulnerabilities.size() > 0) {
-                        echo "Vulnerabilities found:"
-                        for (vuln in scaReport.vulnerabilities) {
-                            // Debug log to inspect the entire vulnerability object
-                            echo "Vulnerability Object: ${vuln}"
+                    for (pkg in packages) {
+                        def packageName = pkg.package.name
+                        def packageVersion = pkg.package.version
+                        def vulnerabilities = pkg.vulnerabilities
 
-                            // Extract vulnerability details
-                            def vulnId = vuln.id ?: 'N/A'
-                            def packageName = vuln.package?.name ?: 'N/A'
-                            def affectedVersions = vuln.affected?.size() > 0 ? vuln.affected[0].ranges[0].events[0].introduced : 'N/A'
-                            def severity = vuln.database_specific?.severity ?: 'N/A'
-                            def referenceUrl = vuln.references?.size() > 0 ? vuln.references[0].url : 'N/A'
-
-                            // Print vulnerability details
-                            echo """
-                            Vulnerability: ${vulnId}
-                            Package: ${packageName}
-                            Affected Versions: ${affectedVersions}
-                            Severity: ${severity}
-                            URL: ${referenceUrl}
-                            """
+                        if (vulnerabilities && vulnerabilities.size() > 0) {
+                            vulnerabilitiesFound = true
+                            echo "Vulnerabilities found for package: ${packageName} (version: ${packageVersion}):"
+                            
+                            for (vuln in vulnerabilities) {
+                                def vulnId = vuln.id ?: 'N/A'
+                                def summary = vuln.summary ?: 'N/A'
+                                def details = vuln.details ?: 'N/A'
+                                def severity = vuln.database_specific?.severity ?: 'N/A'
+                                def references = vuln.references?.collect { it.url }.join(", ") ?: 'N/A'
+                                
+                                // Print vulnerability details
+                                echo """
+                                Vulnerability ID: ${vulnId}
+                                Summary: ${summary}
+                                Details: ${details}
+                                Severity: ${severity}
+                                References: ${references}
+                                """
+                            }
                         }
-                    } else {
+                    }
+                    
+                    if (!vulnerabilitiesFound) {
                         echo "No vulnerabilities found in the report."
                     }
                 }
