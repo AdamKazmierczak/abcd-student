@@ -1,87 +1,58 @@
 pipeline {
-    agent any
+  agent any
+  options {
+    skipDefaultCheckout(true)
+  }
 
-    environment {
-        // Define environment variables
-        ZAP_REPORTS_DIR = "${WORKSPACE}/zap-reports"
-        ZAP_CONFIG_DIR = "${WORKSPACE}/zap-config"
+  stages {
+    stage('Code checkout from GitHub') {
+      steps {
+        script {
+          cleanWs()
+          git credentialsId: 'github-token', url: 'https://github.com/AdamKazmierczak', branch: 'develop'
+        }
+      }
     }
 
-    stages {
-        stage('Code checkout from GitHub') {
-            steps {
-                cleanWs() // Clean workspace
-                git(
-                    url: 'https://github.com/AdamKazmierczak/abcd-student',
-                    branch: 'develop',
-                    credentialsId: 'github-token'
-                )
-            }
-        }
+    stage('ZAP Scan') {
+      steps {
+        sh '''
+          docker run --name juice-shop -d --rm \\
+            -p 3000:3000 \\
+            bkimminich/juice-shop
+          sleep 5
+        '''
 
-        stage('Prepare ZAP Scan') {
-            steps {
-                script {
-                    // Create directories for ZAP reports and config
-                    sh 'mkdir -p $ZAP_REPORTS_DIR'
-                    sh 'mkdir -p $ZAP_CONFIG_DIR'
-
-                    // Check if the passive.yaml file exists, if not, fail the build
-                    def passiveConfigPath = "${ZAP_CONFIG_DIR}/passive.yaml"
-                    if (!fileExists(passiveConfigPath)) {
-                        error "The passive.yaml file is missing at ${passiveConfigPath}."
-                    }
-                }
-            }
-        }
-
-        stage('ZAP Scan') {
-            steps {
-                script {
-                    // Start the Juice Shop application in Docker
-                    sh '''
-                        docker run --name juice-shop -d --rm -p 3000:3000 bkimminich/juice-shop
-                        sleep 5
-                    '''
-
-                    // Run the ZAP scan using the correct volume paths
-                    sh '''
-                        docker run --name zap --rm --add-host host.docker.internal:host-gateway \
-                          -v "$ZAP_REPORTS_DIR:/zap/wrk/reports" \
-                          -v "$ZAP_CONFIG_DIR:/zap/wrk" \
-                          zaproxy/zap-stable bash -c \
-                          "/zap/zap.sh -cmd -addonupdate && \
-                           /zap/zap.sh -cmd -addoninstall communityScripts && \
-                           /zap/zap.sh -cmd -addoninstall pscanrulesAlpha && \
-                           /zap/zap.sh -cmd -addoninstall pscanrulesBeta && \
-                           /zap/zap.sh -cmd -autorun /zap/wrk/passive.yaml"
-                    '''
-                }
-            }
-        }
+        sh '''
+          docker run --name zap --rm \\
+            --add-host host.docker.internal:host-gateway \\
+            -v '/mnt/c/git/abc/abcd-student/.zap:/zap/wrk/passive_scan.yaml:rw' \\
+            -v '/mnt/c/git/abc/abcd-student-Reports/:/zap/wrk/reports' \\
+            owasp/zap2docker-stable bash -c \\
+            'zap.sh -cmd -addonupdate && \\
+            zap.sh -cmd -addoninstall communityScripts && \\
+            zap.sh -cmd -addoninstall pscanrulesAlpha && \\
+            zap.sh -cmd -addoninstall pscanrulesBeta && \\
+            zap.sh -cmd -autorun /zap/wrk/passive_scan.yaml'
+        '''
+      }
     }
+  }
 
-    post {
-        always {
-            script {
-                // Stop the Juice Shop container
-                sh 'docker stop juice-shop'
+  post {
+    always {
+      script {
+        sh '''
+          docker stop juice-shop || true
+        '''
+      }
 
-                // List the contents of the ZAP reports directory for debugging purposes
-                sh 'ls -l $ZAP_REPORTS_DIR'
-
-                // Archive the ZAP scan reports (HTML and XML)
-                archiveArtifacts artifacts: 'zap-reports/*.html, zap-reports/*.xml', allowEmptyArchive: false
-
-                // Publish the ZAP report to DefectDojo
-                defectDojoPublisher defectDojoInstanceUrl: 'https://defectdojo-instance.com',
-                    defectDojoApiKey: 'your-api-key',
-                    scanType: 'ZAP Scan',  // Specify the scan type here
-                    artifact: 'zap-reports/zap_xml_report.xml'
-            }
-        }
-        failure {
-            echo 'Pipeline failed! Check the logs for errors.'
-        }
+      defectDojoPublisher(
+        artifact: '/tmp/zap_xml_report.xml',
+        productName: 'Juice Shop',
+        scanType: 'ZAP Scan',
+        engagementName: 'adaml.kazmierczak@gmail.com'
+      )
     }
+  }
 }
