@@ -25,6 +25,12 @@ pipeline {
                     // Create directories for ZAP reports and config
                     sh 'mkdir -p $ZAP_REPORTS_DIR'
                     sh 'mkdir -p $ZAP_CONFIG_DIR'
+
+                    // Check if the passive.yaml file exists, if not, fail the build
+                    def passiveConfigPath = "${ZAP_CONFIG_DIR}/passive.yaml"
+                    if (!fileExists(passiveConfigPath)) {
+                        error "The passive.yaml file is missing at ${passiveConfigPath}."
+                    }
                 }
             }
         }
@@ -70,8 +76,7 @@ pipeline {
                 // Publish the ZAP report to DefectDojo
                 defectDojoPublisher defectDojoInstanceUrl: 'https://defectdojo-instance.com',
                     defectDojoApiKey: 'your-api-key',
-                    artifactDirectory: 'zap-reports',
-                    artifactType: 'zap',
+                    scanType: 'ZAP Scan',  // Specify the scan type here
                     artifact: 'zap-reports/zap_xml_report.xml'
             }
         }
