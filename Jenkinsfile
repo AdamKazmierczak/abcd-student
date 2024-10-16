@@ -17,10 +17,12 @@ pipeline {
     stage('ZAP Scan') {
       steps {
         sh '''
+           sh 'mkdir -p results'
           docker run --name juice-shop -d --rm \\
             -p 3000:3000 \\
             bkimminich/juice-shop
           sleep 5
+         
         '''
 
         sh '''
