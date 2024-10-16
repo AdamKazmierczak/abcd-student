@@ -28,7 +28,7 @@ pipeline {
             --add-host host.docker.internal:host-gateway \\
             -v '/mnt/c/git/abc/abcd-student/.zap:/zap/wrk/passive_scan.yaml:rw' \\
             -v '/mnt/c/git/abc/abcd-student-Reports/:/zap/wrk/reports' \\
-            owasp/zap2docker-stable bash -c \\
+            zaproxy/zap-stable bash -c \\
             'zap.sh -cmd -addonupdate && \\
             zap.sh -cmd -addoninstall communityScripts && \\
             zap.sh -cmd -addoninstall pscanrulesAlpha && \\
