@@ -26,7 +26,7 @@ pipeline {
         sh '''
           docker run --name zap --rm \\
             --add-host host.docker.internal:host-gateway \\
-            -v '/mnt/c/git/abc/abcd-student/.zap:/zap/wrk/passive_scan.yaml:rw' \\
+            -v '/mnt/c/git/abc/abcd-student/.zap:/zap/wrk/:rw' \\
             -v '/mnt/c/git/abc/abcd-student-Reports/:/zap/wrk/reports' \\
             zaproxy/zap-stable bash -c \\
             'zap.sh -cmd -addonupdate && \\
