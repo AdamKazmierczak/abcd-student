@@ -17,7 +17,7 @@ pipeline {
     stage('ZAP Scan') {
       steps {
         sh '''
-           sh 'mkdir -p results'
+          
           docker run --name juice-shop -d --rm \\
             -p 3000:3000 \\
             bkimminich/juice-shop
@@ -51,11 +51,11 @@ post {
         }
 
         // Archive the report from the specified directory
-        archiveArtifacts artifacts: '/results/zap_xml_report.xml', 
+        archiveArtifacts artifacts: 'zap_xml_report.xml', 
                          allowEmptyArchive: true
 
         // Publish to DefectDojo
-        defectDojoPublisher(artifact: '/results/zap_xml_report.xml', 
+        defectDojoPublisher(artifact: 'zap_xml_report.xml', 
                             productName: 'Juice Shop', 
                             scanType: 'ZAP Scan', 
                             engagementName: 'adaml.kazmierczak@gmail.com')
