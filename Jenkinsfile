@@ -49,13 +49,13 @@ post {
               docker stop juice-shop || true
             '''
         }
-
+ 
         // Archive the report from the specified directory
-        archiveArtifacts artifacts: 'zap_xml_report.xml', 
+        archiveArtifacts artifacts: 'zap-reports/zap_xml_report.xml', 
                          allowEmptyArchive: true
 
         // Publish to DefectDojo
-        defectDojoPublisher(artifact: 'zap_xml_report.xml', 
+        defectDojoPublisher(artifact: 'zap-reports/zap_xml_report.xml', 
                             productName: 'Juice Shop', 
                             scanType: 'ZAP Scan', 
                             engagementName: 'adaml.kazmierczak@gmail.com')
