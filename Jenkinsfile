@@ -48,7 +48,7 @@ pipeline {
       }
 
       defectDojoPublisher(
-        artifact: '/tmp/zap_xml_report.xml',
+        artifact: '/zap/wrk/reports/zap_xml_report.xml',
         productName: 'Juice Shop',
         scanType: 'ZAP Scan',
         engagementName: 'adaml.kazmierczak@gmail.com'
