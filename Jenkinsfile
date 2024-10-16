@@ -9,7 +9,7 @@ pipeline {
       steps {
         script {
           cleanWs()
-          git credentialsId: 'github-token', url: 'https://github.com/AdamKazmierczak', branch: 'develop'
+          git credentialsId: 'github-token', url: 'https://github.com/AdamKazmierczak/abcd-student', branch: 'develop'
         }
       }
     }
