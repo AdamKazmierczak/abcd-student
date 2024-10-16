@@ -49,11 +49,11 @@ post {
         }
 
         // Archive the report from the specified directory
-        archiveArtifacts artifacts: '/zap/wrk/reports/zap_xml_report.xml', 
+        archiveArtifacts artifacts: '/result/zap_xml_report.xml', 
                          allowEmptyArchive: true
 
         // Publish to DefectDojo
-        defectDojoPublisher(artifact: '/zap/wrk/reports/zap_xml_report.xml', 
+        defectDojoPublisher(artifact: '/result/zap_xml_report.xml', 
                             productName: 'Juice Shop', 
                             scanType: 'OSV Scan', 
                             engagementName: 'adaml.kazmierczak@gmail.com')
