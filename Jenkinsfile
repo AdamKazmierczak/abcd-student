@@ -23,18 +23,18 @@ pipeline {
           sleep 5
         '''
 
-        sh '''
-          docker run --name zap --rm \\
-            --add-host host.docker.internal:host-gateway \\
-            -v '/mnt/c/git/abc/abcd-student/.zap:/zap/wrk/:rw' \\
-            -v '/mnt/c/git/abc/abcd-student-Reports/:/zap/wrk/reports' \\
-            zaproxy/zap-stable bash -c \\
-            'zap.sh -cmd -addonupdate && \\
-            zap.sh -cmd -addoninstall communityScripts && \\
-            zap.sh -cmd -addoninstall pscanrulesAlpha && \\
-            zap.sh -cmd -addoninstall pscanrulesBeta && \\
-            zap.sh -cmd -autorun /zap/wrk/passive.yaml'
-        '''
+        // sh '''
+        //   docker run --name zap --rm \\
+        //     --add-host host.docker.internal:host-gateway \\
+        //     -v '/mnt/c/git/abc/abcd-student/.zap:/zap/wrk/:rw' \\
+        //     -v '/mnt/c/git/abc/abcd-student-Reports/:/zap/wrk/reports' \\
+        //     zaproxy/zap-stable bash -c \\
+        //     'zap.sh -cmd -addonupdate && \\
+        //     zap.sh -cmd -addoninstall communityScripts && \\
+        //     zap.sh -cmd -addoninstall pscanrulesAlpha && \\
+        //     zap.sh -cmd -addoninstall pscanrulesBeta && \\
+        //     zap.sh -cmd -autorun /zap/wrk/passive.yaml'
+        // '''
       }
     }
   }
