@@ -1,0 +1,38 @@
+pipeline {
+  agent any
+  options {
+    skipDefaultCheckout(true)
+  }
+
+  stages {
+    stage('Code checkout from GitHub') {
+      steps {
+        script {
+          cleanWs()
+          git credentialsId: 'github-token', url: 'https://github.com/AdamKazmierczak/abcd-student', branch: 'develop'
+        }
+      }
+    }
+
+    stage('ZAP Scan') {
+      steps { 
+                sh 'trufflehog git file://. --since-commit main --branch HEAD --fail --no-update'
+            }
+      }
+    }
+  }
+
+  // post {
+  //   always {
+
+  //     defectDojoPublisher(
+  //       artifact: '/tmp/abcd-student-Reports/zap_xml_report.xml',
+  //       productName: 'Juice Shop',
+  //       scanType: 'ZAP Scan',
+  //       engagementName: 'adaml.kazmierczak@gmail.com'
+  //     )
+  //   }
+  // }
+
+
+
