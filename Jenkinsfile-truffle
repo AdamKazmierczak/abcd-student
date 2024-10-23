@@ -1,14 +1,14 @@
 pipeline {
     agent any
     options {
-        skipDefaultCheckout(true)
+        skipDefaultCheckout(true) // Prevent default checkout
     }
 
     stages {
         stage('Code checkout from GitHub') {
             steps {
                 script {
-                    cleanWs()
+                    cleanWs() // Clean workspace before checkout
                     git credentialsId: 'github-token', url: 'https://github.com/AdamKazmierczak/abcd-student', branch: 'develop'
                 }
             }
@@ -19,27 +19,30 @@ pipeline {
                 script {
                     // Use catchError to handle non-zero exit codes
                     catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
+                        // Run TruffleHog scan and output results to JSON file
                         sh 'trufflehog git file://. --branch main --fail --force-skip-archives --json > /tmp/abcd-student-Reports/trufflehog_output.json'
                     }
                 }
             }
+        }
 
-                    stage('Archive Results') {
+        stage('Archive Results') {
             steps {
+                // Archive the TruffleHog output for later reference
                 archiveArtifacts artifacts: '/tmp/abcd-student-Reports/trufflehog_output.json', allowEmptyArchive: true
             }
-        }
         }
     }
 
     post {
         always {
+            // Publish the artifact to Defect Dojo
             defectDojoPublisher(
-                artifact: '/tmp/abcd-student-Reports/trufflehog_output.json',
+                artifact: '/tmp/abcd-student-Reports/trufflehog_output.json', // Ensure this path is correct
                 productName: 'Juice Shop',
                 scanType: 'Trufflehog Scan',
                 engagementName: 'adaml.kazmierczak@gmail.com'
             )
         }
-   }
+    }
 }
