@@ -19,17 +19,23 @@ pipeline {
                 script {
                     // Use catchError to handle non-zero exit codes
                     catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
-                        sh 'trufflehog git file://. --branch main --fail --force-skip-archives > /tmp/abcd-student-Reports/trufle.txt'
+                        sh 'trufflehog git file://. --branch main --fail --force-skip-archives --json > /tmp/abcd-student-Reports/trufflehog_output.json'
                     }
                 }
             }
+
+                    stage('Archive Results') {
+            steps {
+                archiveArtifacts artifacts: '/tmp/abcd-student-Reports/trufflehog_output.json', allowEmptyArchive: true
+            }
+        }
         }
     }
 
     post {
         always {
             defectDojoPublisher(
-                artifact: '/tmp/abcd-student-Reports/trufle.txt',
+                artifact: '/tmp/abcd-student-Reports/trufflehog_output.json',
                 productName: 'Juice Shop',
                 scanType: 'Trufflehog Scan',
                 engagementName: 'adaml.kazmierczak@gmail.com'
