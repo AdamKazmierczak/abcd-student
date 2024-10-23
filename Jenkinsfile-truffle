@@ -19,7 +19,7 @@ pipeline {
                 script {
                     // Use catchError to handle non-zero exit codes
                     catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
-                        sh 'trufflehog git file://. --branch main --fail --force-skip-archives > trufle.txt'
+                        sh 'trufflehog git file://. --branch main --fail --force-skip-archives > /tmp/abcd-student-Reports/trufle.txt'
                     }
                 }
             }
