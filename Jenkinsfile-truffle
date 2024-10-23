@@ -19,21 +19,21 @@ pipeline {
                 script {
                     // Use catchError to handle non-zero exit codes
                     catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
-                        sh 'trufflehog git file://. --branch main --fail'
+                        sh 'trufflehog git file://. --branch main --fail > trufle.txt'
                     }
                 }
             }
         }
     }
 
-    post {
-        always {
-            defectDojoPublisher(
-                artifact: '/tmp/abcd-student-Reports/zap_xml_report.xml',
-                productName: 'Juice Shop',
-                scanType: 'Trufflehog Scan',
-                engagementName: 'adaml.kazmierczak@gmail.com'
-            )
-        }
+    // post {
+    //     always {
+    //         defectDojoPublisher(
+    //             artifact: '/tmp/abcd-student-Reports/zap_xml_report.xml',
+    //             productName: 'Juice Shop',
+    //             scanType: 'Trufflehog Scan',
+    //             engagementName: 'adaml.kazmierczak@gmail.com'
+    //         )
+    //     }
     }
 }
