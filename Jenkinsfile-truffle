@@ -29,7 +29,7 @@ pipeline {
         stage('Archive Results') {
             steps {
                 // Archive the TruffleHog output for later reference
-                archiveArtifacts artifacts: '/tmp/abcd-student-Reports/trufflehog_output.json', allowEmptyArchive: true
+                archiveArtifacts artifacts: 'trufflehog_output.json', allowEmptyArchive: true
             }
         }
     }
