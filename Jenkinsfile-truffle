@@ -26,14 +26,14 @@ pipeline {
         }
     }
 
-    // post {
-    //     always {
-    //         defectDojoPublisher(
-    //             artifact: '/tmp/abcd-student-Reports/zap_xml_report.xml',
-    //             productName: 'Juice Shop',
-    //             scanType: 'Trufflehog Scan',
-    //             engagementName: 'adaml.kazmierczak@gmail.com'
-    //         )
-    //     }
-   // }
+    post {
+        always {
+            defectDojoPublisher(
+                artifact: '/tmp/abcd-student-Reports/trufle.txt',
+                productName: 'Juice Shop',
+                scanType: 'Trufflehog Scan',
+                engagementName: 'adaml.kazmierczak@gmail.com'
+            )
+        }
+   }
 }
