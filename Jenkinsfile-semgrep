@@ -14,36 +14,36 @@ pipeline {
             }
         }
 
-        stage('ZAP Scan') {
-            steps { 
-                script {
-                    // Use catchError to handle non-zero exit codes
-                    catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
-                        // Run TruffleHog scan and output results to JSON file
-                        sh 'semgrep --config auto --output /tmp/abcd-student-Reports/semgrep_output22.json --json'
+        // stage('ZAP Scan') {
+        //     steps { 
+        //         script {
+        //             // Use catchError to handle non-zero exit codes
+        //             catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
+        //                 // Run TruffleHog scan and output results to JSON file
+        //                 sh 'semgrep --config auto --output /tmp/abcd-student-Reports/semgrep_output22.json --json'
                         
-                    }
-                }
-            }
-        }
+        //             }
+        //         }
+        //     }
+        // }
 
         stage('Archive Results') {
             steps {
                 // Archive the TruffleHog output for later reference
-                archiveArtifacts artifacts: 'tmp/abcd-student-Reports/semgrep_output22.json', allowEmptyArchive: true
+                archiveArtifacts artifacts: '/tmp/abcd-student-Reports/semgrep_output22.json', allowEmptyArchive: true
             }
         }
     }
 
-    post {
-        always {
-            // Publish the artifact to Defect Dojo
-            defectDojoPublisher(
-                artifact: '/tmp/abcd-student-Reports/semgrep_output22.json', // Ensure this path is correct
-                productName: 'Juice Shop',
-                scanType: 'Semgrep JSON Report',
-                engagementName: 'adaml.kazmierczak@gmail.com'
-            )
-        }
-    }
+    // post {
+    //     always {
+    //         // Publish the artifact to Defect Dojo
+    //         defectDojoPublisher(
+    //             artifact: '/tmp/abcd-student-Reports/semgrep_output22.json', // Ensure this path is correct
+    //             productName: 'Juice Shop',
+    //             scanType: 'Semgrep JSON Report',
+    //             engagementName: 'adaml.kazmierczak@gmail.com'
+    //         )
+    //     }
+    // }
 }
