@@ -30,7 +30,7 @@ pipeline {
         stage('Archive Results') {
             steps {
                 // Archive the TruffleHog output for later reference
-                archiveArtifacts artifacts: '/tmp/abcd-student-Reports/semgrep_output22.json', allowEmptyArchive: true
+                archiveArtifacts artifacts: 'tmp/abcd-student-Reports/semgrep_output22.json', allowEmptyArchive: true
             }
         }
     }
