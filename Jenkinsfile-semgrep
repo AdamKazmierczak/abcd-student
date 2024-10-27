@@ -17,11 +17,11 @@ pipeline {
         stage('ZAP Scan') {
             steps { 
                 script {
-                                 sh 'mkdir -p /tmp/abcd-student-Reports/results1'
+                                 sh 'mkdir -p tmp/abcd-student-Reports/results1'
                     // Use catchError to handle non-zero exit codes
                     catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
                         // Run TruffleHog scan and output results to JSON file
-                        sh 'semgrep --config auto --output /tmp/abcd-student-Reports/semgrep_output22.json --json'
+                        sh 'semgrep --config auto --output tmp/abcd-student-Reports/semgrep_output22.json --json'
                         
                     }
                 }
@@ -32,7 +32,7 @@ pipeline {
 
             steps {
                 // Archive the TruffleHog output for later reference
-                archiveArtifacts artifacts: '/tmp/abcd-student-Reports/results1/semgrep_output22.json', allowEmptyArchive: true
+                archiveArtifacts artifacts: 'tmp/abcd-student-Reports/semgrep_output22.json', allowEmptyArchive: true
             }
         }
     }
@@ -41,7 +41,7 @@ pipeline {
     //     always {
     //         // Publish the artifact to Defect Dojo
     //         defectDojoPublisher(
-    //             artifact: '/tmp/abcd-student-Reports/semgrep_output22.json', // Ensure this path is correct
+    //             artifact: 'tmp/abcd-student-Reports/semgrep_output22.json', // Ensure this path is correct
     //             productName: 'Juice Shop',
     //             scanType: 'Semgrep JSON Report',
     //             engagementName: 'adaml.kazmierczak@gmail.com'
