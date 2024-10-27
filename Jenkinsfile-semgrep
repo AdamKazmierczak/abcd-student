@@ -37,15 +37,15 @@ pipeline {
         }
     }
 
-    // post {
-    //     always {
-    //         // Publish the artifact to Defect Dojo
-    //         defectDojoPublisher(
-    //             artifact: 'tmp/abcd-student-Reports/semgrep_output22.json', // Ensure this path is correct
-    //             productName: 'Juice Shop',
-    //             scanType: 'Semgrep JSON Report',
-    //             engagementName: 'adaml.kazmierczak@gmail.com'
-    //         )
-    //     }
-    // }
+    post {
+        always {
+            // Publish the artifact to Defect Dojo
+            defectDojoPublisher(
+                artifact: 'tmp/abcd-student-Reports/semgrep_output22.json', // Ensure this path is correct
+                productName: 'Juice Shop',
+                scanType: 'Semgrep JSON Report',
+                engagementName: 'adaml.kazmierczak@gmail.com'
+            )
+        }
+    }
 }
