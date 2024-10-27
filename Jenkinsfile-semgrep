@@ -20,7 +20,8 @@ pipeline {
                     // Use catchError to handle non-zero exit codes
                     catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
                         // Run TruffleHog scan and output results to JSON file
-                        sh 'semgrep --config auto --output scan_results.json --json > /tmp/abcd-student-Reports/semgrep_output.json'
+                        sh 'semgrep --config auto --output /tmp/abcd-student-Reports/semgrep_output.json --json'
+                        
                     }
                 }
             }
